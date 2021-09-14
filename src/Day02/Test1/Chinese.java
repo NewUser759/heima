@@ -13,6 +13,7 @@ public class Chinese {
     }
 
     public Chinese() {
+        System.out.println("111");
     }
 
     public String getName() {
