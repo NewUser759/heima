@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		 xmlns="http://java.sun.com/xml/ns/javaee"
+		 xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
+		 version="2.5">
+
+
+	<!--
+			配置dispatcherServlet
+				1. 目的就是为了抓住请求，在springmvc里面已经写好了这个类，只需要配置即可
+				2. 为了让这个类能够识别我们刚才写的springmvc.xml ，所以需要告诉它springmvc.xml在哪里。
+				3. 为了让springmvc.xml解析的时机更早，需要让DispatcherServlet在项目发布的时候就进行初始化。
+		-->
+		<servlet>
+			<servlet-name>dispacher</servlet-name>
+			<servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+
+
+			<!--告诉DispatcherServlet，我们的配置文件在哪里-->
+			<init-param>
+				<param-name>contextConfigLocation</param-name>
+				<param-value>classpath:springmvc.xml</param-value>
+			</init-param>
+
+
+
+			<!--让servlet初始化的时机更早，早到项目发布的时候-->
+			<load-on-startup>1</load-on-startup>
+		</servlet>
+
+		<servlet-mapping>
+			<servlet-name>dispacher</servlet-name>
+			<url-pattern>/</url-pattern>
+		</servlet-mapping>
+
+
+
+		 <!--springmvc已经定义好了过滤器，可以帮助我们解决post请求，中文乱码的问题，我们只需要配置即可-->
+			<filter>
+				<filter-name>char</filter-name>
+				<filter-class>org.springframework.web.filter.CharacterEncodingFilter</filter-class>
+
+				<!--设置编码，通过初始化参数来设置编码-->
+				<init-param>
+					<param-name>encoding</param-name>
+					<param-value>utf-8</param-value>
+				</init-param>
+			</filter>
+
+			<filter-mapping>
+				<filter-name>char</filter-name>
+				<url-pattern>*.do</url-pattern>
+			</filter-mapping>
+</web-app>
