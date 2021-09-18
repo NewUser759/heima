@@ -251,7 +251,7 @@
                     //校验表单数据
                     this.$refs[`dataEditForm`].validate((valid)=>{
                         if (valid){
-                            //提交参数给后台
+                            //提交参数给后台  修改数据put
                          axios.put(`/checkitem/${this.formData.id}.do`,this.formData).then(res=>{
                              // 提示操作结果
                              //响应结果
@@ -276,9 +276,9 @@
                        // alert(valid)
                         if (valid) {
                            // alert('submit!'); //ajax提交，完成保存/更新
-                            //2.校验成功就提交表单数据到后台
+                            //2.校验成功就提交表单数据到后台      添加数据,把数据通过post方式提交
                             axios.post("/checkitem/add.do",this.formData).then(res=>{
-                                //3.后台响应结果
+                                //3.后台响应结果  弹窗显示消息
                                 this.$message({
                                     message: res.data.message,
                                     type: res.data.flag?'success':'error'
@@ -286,8 +286,8 @@
                                 //4.成功
                                 if (res.data.flag){
                                     //  关闭新增窗口
-                                    //  页面刷新
                                     this.dialogFormVisible = false;
+                                    //  页面刷新
                                     this.findPage();
                                 }
                             })
@@ -299,6 +299,7 @@
                 },
                 //分页查询
                 findPage() {
+                    //分页查询, 使用post提交表单数据
                     axios.post('/checkitem/findPage.do',this.pagination).then(res=>{
                         // res.data = result
                         if (res.data.flag) {
@@ -352,18 +353,23 @@
                 },
                 // 删除
                 handleDelete(row) {
+                    //根据id值删除数据 , 获取id值
                      var id = row.id;
                     // alert(row.id);
-                    this.$confirm('此操作将【永久删除】该检查项【${row.name}】, 是否继续?', '提示', {
+                    //弹窗消息提示
+                    this.$confirm('此操作将【永久删除】该检查项, 是否继续?', '提示', {
                         confirmButtonText: '确定',
                         cancelButtonText: '取消',
                         type: 'warning'
+                        //点击确定后通过delete方式发送id给后台
                     }).then(() => {
                         axios.delete(`/checkitem/${id}.do`).then(res=>{
+                            //弹窗响应删除成功
                             this.$message({
                                 message: res.data.message,
                                 type: res.data.flag? "success":"error"
                             });
+                            //重新分页查询数据
                             if (res.data.flag){
                                 this.findPage()
                             }

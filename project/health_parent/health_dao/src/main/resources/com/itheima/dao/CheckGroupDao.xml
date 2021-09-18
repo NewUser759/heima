@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.itheima.dao.CheckGroupDao">
+
+    <!--条件分页查询-->
+    <select id="findPage" parameterType="String" resultType="CheckGroup">
+        select
+        id,code,name,helpCode,sex,remark,attention
+        from t_checkgroup
+        <where>
+            <if test="value != null and value.length > 0">
+                code like #{queryString} or name like #{queryString} or helpCode like #{queryString}
+            </if>
+        </where>
+    </select>
+
+
+    <!--为检查组表格增加检查组信息-->
+    <!--还有外键插入-->
+    <insert id="addGroup" parameterType="checkgroup">
+        <selectKey resultType="int" order="AFTER" keyProperty="id">
+            select last_insert_id()
+        </selectKey>
+        insert into t_checkgroup
+	    (code,name,sex,helpCode,remark,attention)
+        values
+        (#{code},#{name},#{sex},#{helpCode},#{remark},#{attention})
+    </insert>
+
+    <!--为检查组检查项关系表添加关系-->
+    <insert id="addGroupItem" parameterType="int">
+        insert into t_checkgroup_checkitem
+       (checkgroup_id,checkitem_id)
+        values (#{groupId},#{itemId})
+    </insert>
+
+    <select id="getGroup" parameterType="Integer" resultType="CheckGroup">
+        select id,code,name,sex,helpCode,remark,attention
+        from  t_checkgroup
+        where
+        id = #{id}
+    </select>
+
+    <!--检查组检查项关系表增加关系-->
+    <select id="getItemId" parameterType="Integer" resultType="Integer">
+       select checkitem_id
+       from t_checkgroup_checkitem
+       where checkgroup_id = #{groupId}
+    </select>
+
+    <!--检查组表格跟新-->
+    <update id="update" parameterType="Checkgroup">
+        update t_checkgroup
+        set
+            code=#{code},
+            name=#{name},
+            helpCode=#{helpCode},
+            sex=#{sex},
+            remark=#{remark},
+            attention=#{attention}
+         where id=#{id}
+    </update>
+
+    <!--检查组检查项关系表格删除-->
+    <delete id="deleteCheckGroupCheckItem" parameterType="int">
+         delete from t_checkgroup_checkitem where checkgroup_id = #{checkGroupId}
+    </delete>
+
+    <!--根据id删除检查组表格-->
+    <delete id="deleteCheckGroup" parameterType="int">
+        delete from t_checkgroup where id = #{checkGroupId}
+    </delete>
+</mapper>
